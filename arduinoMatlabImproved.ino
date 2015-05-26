@@ -10,6 +10,8 @@
  */
 
 #include <DigitalToggle.h>
+#include <digital_write_macros.h>
+#include <wiring.h>
 
 /******************************CONFIGURATION******************************/
 #define chanel_number 8  //set the number of chanels
