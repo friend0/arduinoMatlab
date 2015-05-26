@@ -1,0 +1,118 @@
+#######################################
+# Syntax Coloring Map For ArduinoRCLib
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AIPin	KEYWORD1
+Channel	KEYWORD1
+Curve	KEYWORD1
+DAIPin	KEYWORD1
+DIPin	KEYWORD1
+DualRates	KEYWORD1
+Expo	KEYWORD1
+FlycamOne	KEYWORD1
+Gyro	KEYWORD1
+InputModifier	KEYWORD1
+InputOutputPipe	KEYWORD1
+InputProcessor	KEYWORD1
+InputSource	KEYWORD1
+InputToInputMix	KEYWORD1
+OutputSource	KEYWORD1
+OutputProcessor	KEYWORD1
+PlaneModel	KEYWORD1
+PPMIn	KEYWORD1
+PPMOut	KEYWORD1
+Retracts	KEYWORD1
+ServoIn	KEYWORD1
+ServoOut	KEYWORD1
+Swashplate	KEYWORD1
+ThrottleHold	KEYWORD1
+Timer1	KEYWORD1
+rc	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+apply	KEYWORD2
+update	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+Type_Normal	LITERAL1
+Type_AVCS	LITERAL1
+Mode_Normal	LITERAL1
+Mode_AVCS	LITERAL1
+Type_H1	LITERAL1
+Type_H2	LITERAL1
+Type_HE	LITERAL1
+Type_HR3	LITERAL1
+Type_HN3	LITERAL1
+Type_H3	LITERAL1
+Type_H4	LITERAL1
+Type_H4X	LITERAL1
+Type_NoDoor	LITERAL1
+Type_Single	LITERAL1
+Type_Dual	LITERAL1
+WingType_Tailed	LITERAL1
+WingType_Tailless	LITERAL1
+TailType_Normal	LITERAL1
+TailType_VTail	LITERAL1
+TailType_Ailvator	LITERAL1
+RudderType_None	LITERAL1
+RudderType_Normal	LITERAL1
+RudderType_Winglet	LITERAL1
+AileronCount_1	LITERAL1
+AileronCount_2	LITERAL1
+AileronCount_4	LITERAL1
+FlapCount_0	LITERAL1
+FlapCount_1	LITERAL1
+FlapCount_2	LITERAL1
+FlapCount_4	LITERAL1
+BrakeCount_0	LITERAL1
+BrakeCount_1	LITERAL1
+BrakeCount_2	LITERAL1
+Output_AIL1	LITERAL1
+Output_AIL2	LITERAL1
+Output_AIL3	LITERAL1
+Output_AIL4	LITERAL1
+Output_ELE1	LITERAL1
+Output_ELE2	LITERAL1
+Output_RUD1	LITERAL1
+Output_RUD2	LITERAL1
+Output_FLP1	LITERAL1
+Output_FLP2	LITERAL1
+Output_FLP3	LITERAL1
+Output_FLP4	LITERAL1
+Output_BRK1	LITERAL1
+Output_BRK2	LITERAL1
+Output_THR1	LITERAL1
+Output_THR2	LITERAL1
+Output_THR3	LITERAL1
+Output_THR4	LITERAL1
+Output_PIT	LITERAL1
+Output_GYR1	LITERAL1
+Output_GYR2	LITERAL1
+Output_GYR3	LITERAL1
+Output_GEAR	LITERAL1
+Output_DOOR	LITERAL1
+CamMode_Video	LITERAL1
+CamMode_Serial	LITERAL1
+CamMode_Photo	LITERAL1
+SensorMode_Normal	LITERAL1
+SensorMode_Flipped	LITERAL1
+Input_AIL	LITERAL1
+Input_ELE	LITERAL1
+Input_THR	LITERAL1
+Input_RUD	LITERAL1
+Input_FLP	LITERAL1
+Input_BRK	LITERAL1
+Input_PIT	LITERAL1
+DefaultCurve_Linear	LITERAL1
+DefaultCurve_HalfLinear	LITERAL1
+DefaultCurve_V	LITERAL1
