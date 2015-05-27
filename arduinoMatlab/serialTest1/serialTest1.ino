@@ -29,8 +29,6 @@ void setup() {
  void establishContact() {
      while (Serial.available() <= 0) {
        Serial.println('A', 8);   // send a capital A
-       Serial.println('D', 8);   // send a capital A
-
        delay(300);
      }
  }
