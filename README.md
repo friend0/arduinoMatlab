@@ -11,9 +11,19 @@ Controller <-> Matlab <-> Arduino <-> DX6i RC Transmitter <-> RC Vehicle
 The com link between matlab and the arduino is a simple serial connection. The link supports byte-wise transmissions, but a lightweight protocol, allows for the simple routing of packets and recombination into higher-order integers from one end to the other. 
 
 #How to use
-As of now (5/26/15) I have only developed the Arduino sketch to be run on the Uno. This sketch performs some hardware setup, then pings the serial port. 
+Clone the repo with:
+```
+git clone https://github.com/empireryan/arduinoMatlab.git
+```
 
-The Matlab script that will be written, when run, will listen for this ping. Once received, it will send an acknowledge packet. When the Ack packet is reciedved by the uno, it will begin the PPM interrupt routine, and will also run a simple FSM for processing packets form Matlab. 
+Navigate the the 'arduinoMatlabImproved' directory. 
+Find the arduino sketch for setting up serial, and pinging a matlab serial session. Can flash this to the Uno using the Arduino IDE using AVRdude bootloader.
+
+Also find the 'transmitSerial.m' Matlab script. This file sets up a serial port and listens for the Arduino, which ought to be sending a stream of 'A's. When the Uno is detected and serial comm is established, Matlab pauses to wait for Uno to reset, then sends data. 
+
+The state of the code is as follows. I've had some success wensing strings over serial and using Serial.parseInt() on the arduino side, but it seems to choke when sending multiple packets. 
+
+Forgive the messy code, I've been trying a lot of things. It may be interesting to fall back to the 'bitbanged' routines that are commented out on both the Arduino and Matlab sides if we cant get the two to play together using the higher level code we're trying now. 
 
 #Todo
 - Need to specify an API for Matlab to interface to
