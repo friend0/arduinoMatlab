@@ -1,18 +1,19 @@
-function [s, flag] = initSerial(port)
+function [s, flag] = initSerial(port, channels);
 pause on;
 
 switch nargin
     case 1
         comport = port;
+        numChannels = 6; %default
+    case 2
+        comport = port;
+        numChannels = channels;
     otherwise
-        comport = '/dev/tty.usbmodem1411';        
+        comport = '/dev/tty.usbmodem1411';      %default
+        numChannels = 6;                        %default
 end
-    
-    
+        
 try
-    ppmValues = [2000, 1700, 1700, 1500, 1500, 2000];
-    numChannels = size(ppmValues);
-    numChannels = numChannels(2);
 
     %Serial setup
     s = serial('/dev/tty.usbmodem1411');    % define serial port
@@ -32,7 +33,7 @@ try
         %w=fscanf(s,'%s'); 
         w=fread(s,1,'uchar');              % must define the input % d or %s, etc.
     end
-
+    fprintf(s, '%d,', numChannels);     %indicate start of frame
     display(['ArduinoPPM found']);
     flag = 1;
     
