@@ -8,14 +8,13 @@
  * obtained over serial are then converted to PPM values and piped into the
  * trainer port of the DX6i RC transmitter.
  */
-
 /******************************CONFIGURATION******************************/
 #define chanel_number 6  //set the number of chanels
 #define default_servo_value 1500  //set the default servo value
 #define PPM_FrLen 22500  //set the PPM frame length in microseconds (1ms = 1000µs)
 #define PPM_PulseLen 300  //set the pulse length
 #define onState 1  //set polarity of the pulses: 1 is positive, 0 is negative
-#define sigPin 10  //set PPM signal output pin on the arduino
+#define sigPin 9  //set PPM signal output pin on the arduino
 #define ledPin 7
 /**************************************************************************/
 
@@ -29,13 +28,22 @@
 #define DATA_CAP 5
 #define END_FRAME 6
 
+
 /*this array holds the servo values for the ppm signal
  change theese values in your code (usually servo values move between 1000 and 2000)*/ 
-int ppm[chanel_number], someNum, routingInfo;
+int ppm[chanel_number], routingInfo;
 char charBuffer[12];
-uint8_t State, nextState, MSB, LSB, route, count;
+uint8_t currentState, nextState, MSB, LSB, route, count;
 unsigned long interval, currentMillis, previousMillis; //Use this to keep track of time for serial ping
-bool contact, ledState;
+bool contact, ledState, newLineFlag;
+
+enum states{
+  deflt,
+  wait,
+  startFrame,
+  receivePackets,
+  endFrame
+};
 
 void pingEther();   //Send out packets so that Matlab can ACK and establish a connection
 
@@ -50,22 +58,18 @@ void setup(){
   /**
    * initiallize default ppm values
    */
-  Serial.begin(115200);   //Configure serial port at 9600 baud
-
-  State = START_FRAME;
-  nextState = DEFAULT;
-  MSB = 0;
-  LSB = 0;
-  route = 0;
+  Serial.begin(9600);   //Configure serial port at 9600 baud
+  currentState = startFrame;
+  nextState = deflt;
   contact = false;
   interval = 300;
   currentMillis = 0;
   previousMillis = 0;
+  newLineFlag = false;
 
   for(int i=0; i < chanel_number; i++){
     ppm[i]= default_servo_value;
   }
-
 
   PORTB = (((B00000000) | !onState) << (sigPin-8)); 
   
@@ -87,113 +91,58 @@ void setup(){
   uint8_t route = 0;
   
   digitalWrite(ledPin, HIGH);
-  establishContact();
-  Serial.setTimeout(100);
-  
+  establishContact();  
+  Serial.setTimeout(50);
 }
  
  void establishContact() {
      while (Serial.available() <= 0) {
        //Serial.println('A', 8);   // send a capital A
        Serial.println('A');   // send a capital A
-       delay(500);
+       delay(100);
      }
  }
  
 void loop(){
 
-
-  //if(contact == false){
-    //pingEther();
-  //}
-  //else{     //We've made contact with Matlab, run the FSM to process packets as they come in
-    runFSM();
-    //static int val = 1;    
-    //ppm[0] = ppm[0] + val;
-    //if(ppm[0] >= 2000){ val = -1; }
-    //if(ppm[0] <= 1000){ val = 1; }
-
-  //}
+  runFSM();    //update this function to return error conditions
+  /*
+  if(Serial.available() > 0)
+  {     
+    static int curChan = 0;
+    if((char)Serial.peek() == '\n'){curChan = 0; Serial.read();}    
+    int someNum = Serial.parseInt();
+    ppm[curChan] = someNum;
+    curChan++;
+    if(curChan > (chanel_number)) curChan = 0;
+  }
+  */
 
 }
 
 void runFSM(){
   if(Serial.available() > 0)
   {     
-        static int curChan = 0;
-
-    int someNum = Serial.parseInt();
-    //Serial.print("I recieved: ");
-    //Serial.println(someNum);
+    static int curChan = 0;
     
-    ppm[curChan] = Serial.parseInt();
-    curChan++;
-    if(curChan >= (chanel_number)) curChan = 0;
-    //nextState = START_FRAME;
+    if(currentState == startFrame){
+         if(Serial.parseInt() == 65535) nextState = receivePackets;  
+    }
+    if(currentState == receivePackets){
+         if((char)Serial.peek() == '\n'){newLineFlag = true; goto NEWLINE;}
+         ppm[curChan] = Serial.parseInt();
+         curChan++;
+     NEWLINE:    
+         if(curChan >= (chanel_number)){ curChan = 0; nextState = endFrame;} 
+         else if(newLineFlag == true){newLineFlag = false; curChan = 0; nextState = startFrame;}    //error condition
+    }
+    if(currentState == endFrame){
+        char someChar = (char)Serial.read();
+        if(someChar == '\n'){nextState = startFrame;}
+        else{nextState = startFrame;}      //error condition
+    }
     
-//    if(State == (START_FRAME)){
-//      routingInfo = Serial.parseInt();
-//      nextState = DATA_CAP;
-//    }
-    
-    //if(State == DATA_CAP){
-
-    //} 
-
-    //uint8_t packt = Serial.read();
-
-//    if(State == (START_FRAME)){
-//      if(packt = 's'){  
-//        nextState = START_CNFRM;  //Have potentially found the start of a frame
-//      }
-//      else{
-//        nextState = START_FRAME;
-//      }
-//    }
-//    
-//    if(State == (START_CNFRM)){
-//      if(packt = 't'){  
-//        nextState = DATA_ROUTE;  //Have potentially found the start of a frame
-//      }
-//      else{
-//        nextState = START_FRAME;
-//      }
-//    }
-//    //Reading in two bytes
-//    // xxx00yyy (first) yyyyyyyy (second)
-//    if(State == DATA_ROUTE){
-//      if((packt & B00011000) == 0){ //confirmed as routing bit
-//        route = ((packt & B11100000) >> 5); //extract routing information
-//        MSB = (packt & B00000111);
-//        nextState = DATA_CAP;    
-//        digitalWrite(ledPin, LOW);
-//      }
-//
-//    }
-//
-//    if(State == DATA_CAP)
-//    {
-//      //digitalWrite(ledPin, LOW);
-//
-//      LSB = packt;  //extract LSB - note no checking of packt as the probability of 
-//      ppm[route-1] = ((MSB << 8) | LSB);
-//
-//      /**
-//       * if routing number is greater than or equal to number of channels, we've collected all data in packet, 
-//       * restart state machine
-//       * else, get next routing packet
-//       */
-//      if(route >= chanel_number){
-//        nextState = START_FRAME;
-//      }
-//      else{
-//        nextState = DATA_ROUTE;
-//      }
-//
-//    }
-
-    State = nextState;
-
+    currentState = nextState;
   }
 }
 
