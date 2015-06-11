@@ -1,5 +1,14 @@
-function [s, flag] = initSerial()
+function [s, flag] = initSerial(port)
 pause on;
+
+switch nargin
+    case 1
+        comport = port;
+    otherwise
+        comport = '/dev/tty.usbmodem1411';        
+end
+    
+    
 try
     ppmValues = [2000, 1700, 1700, 1500, 1500, 2000];
     numChannels = size(ppmValues);
@@ -28,7 +37,6 @@ try
     flag = 1;
     
 catch ME
-    display(['big dicks found']);
     fclose(s);
     flag = 0;
     ME
