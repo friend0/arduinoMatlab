@@ -16,16 +16,25 @@ Clone the repo with:
 git clone https://github.com/empireryan/arduinoMatlab.git
 ```
 
-Navigate the the 'arduinoMatlabImproved' directory. 
-Find the arduino sketch for setting up serial, and pinging a matlab serial session. Can flash this to the Uno using the Arduino IDE using AVRdude bootloader.
+Navigate to the 'arduinoMatlabImproved' directory. This is where the lates code is.
 
-Also find the 'transmitSerial.m' Matlab script. This file sets up a serial port and listens for the Arduino, which ought to be sending a stream of 'A's. When the Uno is detected and serial comm is established, Matlab pauses to wait for Uno to reset, then sends data. 
+Find the arduino sketch for setting up serial, and pinging a matlab serial session. You can flash this to the Uno using the Arduino IDE using the AVRdude bootloader.
 
-The state of the code is as follows. I've had some success wensing strings over serial and using Serial.parseInt() on the arduino side, but it seems to choke when sending multiple packets. 
+Also find the 'transmitSerial.m' and 'initSerial.m' Matlab scripts. This file sets up a serial port and listens for the Arduino, which ought to be sending a stream of 'A's. When the Uno is detected and serial comm is established, Matlab pauses to wait for Uno to reset, then sends data. 
 
-Forgive the messy code, I've been trying a lot of things. It may be interesting to fall back to the 'bitbanged' routines that are commented out on both the Arduino and Matlab sides if we cant get the two to play together using the higher level code we're trying now. 
+Right now, the com port is hard-coded into the init script. Change this to the current port that your Arduino is on. make sure to grab the returned serial object from the function so that it is in the workspace.
+
+From here, given that the connection is succesful, we ought to be able to send data. It is important to make sure that the Uno has been flashed, and is waiting to make a serial connection by sending out 'A's. 
+
+Here is an example:
+
+```
+ppmValues = [2000,2000,1500,1500,2000,2000];
+[s,flag] = initSerial;
+transmitSerial(s, ppmValues);
+```
+
+Note that I believe the RC will be expecting standard PPM values, from 1000 mS to 2000mS with 1500 being the nominal value. There is currently no protection on this end for values outside of this range.
 
 #Todo
-- Need to specify an API for Matlab to interface to
-- Need to write the Matlab script - right now I have a minimally operational script which can connect to and grab a few packets from the Arduino
-- Need to determine if an op-amp is needed at the output of the Arduino, also consider switching to a 3.3v Arduino
+- Add value 'saturation' to out of range ppm values
