@@ -5,7 +5,7 @@ try
     numChannels = size(ppmValues);
     numChannels = numChannels(2);
         
-    fprintf(s, '%d,', 65535);     %indicate start of frame
+    fprintf(s, '%d,', 65535);     %indicate start of frame (0b1111111111111111)
     for i=1:numChannels
     fprintf(s,'%d,', ppmValues(i));     %send all ppm values in frame
     end
